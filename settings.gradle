@@ -1,0 +1,2 @@
+rootProject.name = "WHAT-TO-WEAR"
+include ':app'

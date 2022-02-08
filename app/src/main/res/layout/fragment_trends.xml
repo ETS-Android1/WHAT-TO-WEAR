@@ -6,6 +6,20 @@
     tools:context=".Trends">
 
     <!-- TODO: Update blank fragment layout -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/johannasButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Johanna's Button"
+            tools:layout_editor_absoluteX="112dp"
+            tools:layout_editor_absoluteY="252dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

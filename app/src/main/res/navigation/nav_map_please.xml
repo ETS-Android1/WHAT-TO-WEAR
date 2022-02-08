@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_map_please"
+    app:startDestination="@id/login_Screen">
+
+    <fragment
+        android:id="@+id/main_Menu"
+        android:name="com.tasdasdsaduiz.what_to_wear.Main_Menu"
+        android:label="fragment_main__menu"
+        tools:layout="@layout/fragment_main__menu" >
+        <action
+            android:id="@+id/action_main_Menu_to_services"
+            app:destination="@id/services" />
+        <action
+            android:id="@+id/action_main_Menu_to_wardrobe"
+            app:destination="@id/wardrobe" />
+        <action
+            android:id="@+id/action_main_Menu_to_trends"
+            app:destination="@id/trends" />
+        <action
+            android:id="@+id/action_main_Menu_to_styles"
+            app:destination="@id/styles" />
+    </fragment>
+    <fragment
+        android:id="@+id/services"
+        android:name="com.tasdasdsaduiz.what_to_wear.Services"
+        android:label="fragment_services"
+        tools:layout="@layout/fragment_services" >
+        <action
+            android:id="@+id/action_services_to_main_Menu"
+            app:destination="@id/main_Menu" />
+    </fragment>
+    <fragment
+        android:id="@+id/wardrobe"
+        android:name="com.tasdasdsaduiz.what_to_wear.Wardrobe"
+        android:label="fragment_wardrobe"
+        tools:layout="@layout/fragment_wardrobe" >
+        <action
+            android:id="@+id/action_wardrobe_to_main_Menu"
+            app:destination="@id/main_Menu" />
+    </fragment>
+    <fragment
+        android:id="@+id/login_Screen"
+        android:name="com.tasdasdsaduiz.what_to_wear.Login_Screen"
+        android:label="fragment_login__screen"
+        tools:layout="@layout/fragment_login__screen" >
+        <action
+            android:id="@+id/action_login_Screen_to_main_Menu"
+            app:destination="@id/main_Menu" />
+    </fragment>
+    <fragment
+        android:id="@+id/trends"
+        android:name="com.tasdasdsaduiz.what_to_wear.Trends"
+        android:label="fragment_trends"
+        tools:layout="@layout/fragment_trends" >
+        <action
+            android:id="@+id/action_trends_to_main_Menu"
+            app:destination="@id/main_Menu" />
+    </fragment>
+    <fragment
+        android:id="@+id/styles"
+        android:name="com.tasdasdsaduiz.what_to_wear.styles"
+        android:label="fragment_styles"
+        tools:layout="@layout/fragment_styles" >
+        <action
+            android:id="@+id/action_styles_to_main_Menu"
+            app:destination="@id/main_Menu" />
+    </fragment>
+</navigation>

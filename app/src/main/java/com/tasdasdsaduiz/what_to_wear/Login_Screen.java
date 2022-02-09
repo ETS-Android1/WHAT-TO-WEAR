@@ -86,7 +86,20 @@ public class Login_Screen extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
 
+            Button continueButton = (Button) view.findViewById(R.id.testButton);
+            continueButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            NavController JohannaNC = Navigation.findNavController(view);
+                            JohannaNC.navigate(R.id.action_login_Screen_to_trends);
+
+                        }
+                    }
+            );
         // catching the view as a constraind layout so that we can access its layout parameters
         MYCL = (ConstraintLayout) view;
 
@@ -299,5 +312,6 @@ public class Login_Screen extends Fragment {
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
+
 
 }

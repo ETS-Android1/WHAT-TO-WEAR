@@ -2,4 +2,7 @@
     <string name="app_name">WHAT-TO-WEAR</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="invalid_credentials_toast">Invalid Credentials!</string>
+    <string name="empty_username_toast">The username field is empty!</string>
+    <string name="empty_password_toast">The password field is empty!</string>
 </resources>

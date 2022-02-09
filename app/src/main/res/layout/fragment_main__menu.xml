@@ -4,25 +4,100 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/test2back"
     tools:context=".Main_Menu">
 
     <!-- TODO: Update blank fragment layout -->
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
+        android:id="@+id/Title"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="45dp"
+        android:text="WHAT-TO-WEAR"
+
+        android:textSize="17pt"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        />
 
     <Button
-        android:id="@+id/myfirstbutton_id"
-        android:layout_width="193dp"
-        android:layout_height="190dp"
-        android:layout_marginTop="156dp"
-        android:text="test_fragment_nav"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
+        android:id="@+id/wardrobeButton"
+        android:layout_width="170dp"
+        android:layout_height="150dp"
+
+        android:layout_marginTop="200dp"
+        android:text="MY WARDROBE"
+
+        android:textSize="20dp"
+        app:layout_constraintHorizontal_bias="0.20"
+        app:layout_constraintLeft_toLeftOf="parent"
+
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        />
+
+    <Button
+
+        android:id="@+id/trendButton"
+        android:layout_width="120dp"
+        android:layout_height="150dp"
+
+        android:layout_marginTop="200dp"
+        android:text="TRENDS"
+
+        android:textSize="20dp"
+        app:layout_constraintHorizontal_bias="0.80"
+        app:layout_constraintLeft_toLeftOf="parent"
+
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        />
+
+    <Button
+
+        android:id="@+id/servicesButton"
+        android:layout_width="170dp"
+        android:layout_height="150dp"
+
+        android:layout_marginTop="400dp"
+        android:text="SERVICES"
+
+        android:textSize="20dp"
+        app:layout_constraintHorizontal_bias="0.80"
+        app:layout_constraintLeft_toLeftOf="parent"
+
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        />
+
+    <Button
+
+        android:id="@+id/stylesButton"
+        android:layout_width="120dp"
+        android:layout_height="150dp"
+
+        android:layout_marginTop="400dp"
+        android:text="STYLES"
+
+        android:textSize="20dp"
+        app:layout_constraintHorizontal_bias="0.20"
+        app:layout_constraintLeft_toLeftOf="parent"
+
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

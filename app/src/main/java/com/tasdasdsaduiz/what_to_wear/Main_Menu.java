@@ -1,7 +1,9 @@
 package com.tasdasdsaduiz.what_to_wear;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -71,18 +73,62 @@ public class Main_Menu extends Fragment {
 
         super.onViewCreated(view, savedInstanceState);
 
-        Button myfirstbutton = (Button) view.findViewById(R.id.myfirstbutton_id);
-        myfirstbutton.setOnClickListener(
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                NavController nc = (NavController) Navigation.findNavController(view);
+                nc.navigate(R.id.action_main_Menu_to_login_Screen);
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(callback);//  addCallback(this,callback);
+
+        Button trendsButton = (Button) view.findViewById(R.id.trendButton);
+        trendsButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
 
-                        NavController nc = Navigation.findNavController(view);
-                        nc.navigate(R.id.action_main_Menu_to_services);
+                        // trendsButton.setBackgroundColor(Color.RED);
 
+                        NavController nc = (NavController) Navigation.findNavController(view);
+                        nc.navigate(R.id.action_main_Menu_to_trends);
                     }
                 }
         );
+
+        Button wardrobeButton = (Button) view.findViewById(R.id.wardrobeButton);
+        wardrobeButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        NavController nc = (NavController) Navigation.findNavController(view);
+                        nc.navigate(R.id.action_main_Menu_to_wardrobe);
+                    }
+                }
+        );
+
+        Button stylesButton = (Button) view.findViewById(R.id.stylesButton);
+        stylesButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        NavController nc = (NavController) Navigation.findNavController(view);
+                        nc.navigate(R.id.action_main_Menu_to_styles);
+                    }
+                }
+        );
+
+        Button servicesButton = (Button) view.findViewById(R.id.servicesButton);
+        servicesButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        NavController nc = (NavController) Navigation.findNavController(view);
+                        nc.navigate(R.id.action_main_Menu_to_services);
+                    }
+                }
+        );
+
 
     }
 

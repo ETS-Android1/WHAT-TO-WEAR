@@ -88,7 +88,7 @@ public class Login_Screen extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
 
-            Button continueButton = (Button) view.findViewById(R.id.testButton);
+            /*Button continueButton = (Button) view.findViewById(R.id.testButton);
             continueButton.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
@@ -99,7 +99,7 @@ public class Login_Screen extends Fragment {
 
                         }
                     }
-            );
+            );*/
         // catching the view as a constraind layout so that we can access its layout parameters
         MYCL = (ConstraintLayout) view;
 

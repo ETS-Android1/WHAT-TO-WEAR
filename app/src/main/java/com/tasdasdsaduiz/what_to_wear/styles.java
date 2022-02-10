@@ -2,7 +2,12 @@ package com.tasdasdsaduiz.what_to_wear;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,5 +65,20 @@ public class styles extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_styles, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                NavController nc = (NavController) Navigation.findNavController(view);
+                nc.navigate(R.id.action_styles_to_main_Menu);
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(callback);//  addCallback(this,callback);
+
     }
 }

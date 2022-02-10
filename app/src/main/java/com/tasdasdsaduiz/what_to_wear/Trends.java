@@ -2,6 +2,7 @@ package com.tasdasdsaduiz.what_to_wear;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -71,6 +72,15 @@ public class Trends extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         super.onViewCreated(view, savedInstanceState);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                NavController nc = (NavController) Navigation.findNavController(view);
+                nc.navigate(R.id.action_trends_to_main_Menu);
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(callback);//  addCallback(this,callback);
 
         Button johannasFirstbutton = (Button) view.findViewById(R.id.johannasButton);
         johannasFirstbutton.setOnClickListener(

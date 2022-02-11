@@ -1,0 +1,15 @@
+/* TODO: add animation to the main menu main buttons
+    + add register button in login-scree
+    + add register form
+    + save the data in mock file to do verification
+    + make pop up for forgot password
+    + make pop up for rate us with 5 stars
+    + make privacy policy opening a link to some privacy policy in google pages
+    + make donate button going to some other fragment where you have a 2 section selection button
+    a fake map with the locations of charities and a scrollable list of them
+    + the scrollable has blocks with the name, distance and links to the charity's page
+    + make Java object for account make it possible to save account for user
+    + make it so that edit boxes colors change when the email exists or not
+    + make thread for animation when pressing the register button during which all become un-clickable
+    + it should last for 1 sec and at the same time the object saving should be happening.
+*/

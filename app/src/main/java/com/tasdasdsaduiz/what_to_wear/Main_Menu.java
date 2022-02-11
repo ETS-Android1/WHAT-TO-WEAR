@@ -31,12 +31,10 @@ import android.widget.ImageView;
  */
 public class Main_Menu extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     private ConstraintLayout MYCL;
@@ -53,7 +51,6 @@ public class Main_Menu extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment Main_Menu.
      */
-    // TODO: Rename and change types and number of parameters
     public static Main_Menu newInstance(String param1, String param2) {
         Main_Menu fragment = new Main_Menu();
         Bundle args = new Bundle();

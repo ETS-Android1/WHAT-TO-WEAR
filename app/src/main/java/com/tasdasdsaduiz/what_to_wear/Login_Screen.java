@@ -102,7 +102,6 @@ public class Login_Screen extends Fragment {
             );*/
         // catching the view as a constraind layout so that we can access its layout parameters
         MYCL = (ConstraintLayout) view;
-
         super.onViewCreated(view, savedInstanceState);
 
         // this is to remove the physicall back button messing up the navigation
@@ -117,6 +116,7 @@ public class Login_Screen extends Fragment {
 
         // TODO: add dialog window for forgot password
         Button forgot_pass_button = (Button) view.findViewById(R.id.forgot_password);
+        // forgot_pass_button.setText("Forgot password?");
         /*forgot_pass_button.setOnFocusChangeListener(
                 new View.OnFocusChangeListener() {
                     @Override
@@ -146,11 +146,10 @@ public class Login_Screen extends Fragment {
                             forgot_pass_button.setText(asis);
                         }
 
-                        return true;
+                        return false;
                     }
                 }
         );
-
         forgot_pass_button.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -159,6 +158,36 @@ public class Login_Screen extends Fragment {
                         // Here we have to add the dialog box for user to enter his e-mail
                         // and request a reset link
 
+                    }
+                }
+        );
+
+        Button register_button = (Button) view.findViewById(R.id.register);
+        register_button.setOnTouchListener(
+                new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent event) {
+
+                        if( event.getAction() == MotionEvent.ACTION_UP ){
+                            register_button.setText("REGISTER");
+                        }
+                        else if( event.getAction() == MotionEvent.ACTION_DOWN ){
+                            SpannableString asis = new SpannableString(register_button.getText().toString());
+                            asis.setSpan(new UnderlineSpan(), 0, asis.length(), 0);
+                            register_button.setText(asis);
+                        }
+
+                        return false;
+                    }
+                }
+        );
+
+        register_button.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        NavController nc = (NavController) Navigation.findNavController(view);
+                        nc.navigate(R.id.action_login_Screen_to_registrationFragment);
                     }
                 }
         );
@@ -293,6 +322,7 @@ public class Login_Screen extends Fragment {
 
                     }
                 }
+
         );
 
     }

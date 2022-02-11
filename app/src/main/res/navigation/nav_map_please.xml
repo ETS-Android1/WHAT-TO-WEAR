@@ -57,6 +57,9 @@
         <action
             android:id="@+id/action_login_Screen_to_trends"
             app:destination="@id/trends" />
+        <action
+            android:id="@+id/action_login_Screen_to_registrationFragment"
+            app:destination="@id/registrationFragment" />
     </fragment>
     <fragment
         android:id="@+id/trends"
@@ -75,5 +78,14 @@
         <action
             android:id="@+id/action_styles_to_main_Menu"
             app:destination="@id/main_Menu" />
+    </fragment>
+    <fragment
+        android:id="@+id/registrationFragment"
+        android:name="com.tasdasdsaduiz.what_to_wear.registrationFragment"
+        android:label="fragment_registration"
+        tools:layout="@layout/fragment_registration" >
+        <action
+            android:id="@+id/action_registrationFragment_to_login_Screen"
+            app:destination="@id/login_Screen" />
     </fragment>
 </navigation>

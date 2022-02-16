@@ -1,6 +1,8 @@
 package com.tasdasdsaduiz.what_to_wear;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,9 +17,11 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.text.InputType;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,6 +31,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import java.io.File;
 
 import javax.sql.ConnectionEventListener;
 
@@ -230,7 +236,7 @@ public class Login_Screen extends Fragment {
                             }
                         }
                         else{
-                            if(username.getText().toString().equals("")){
+                            if( onlywhitespace( username.getText().toString() ) || username.getText().toString().equals("Username") ){
                                 username.setText("Username");
                                 username.setTextColor(Color.GRAY);
                             }
@@ -249,12 +255,18 @@ public class Login_Screen extends Fragment {
                             if(password.getText().toString().equals("Password")){
                                 password.setText("");
                                 password.setTextColor(Color.BLACK);
+
+                                password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+                                InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                             }
                         }
                         else{
                             if(password.getText().toString().equals("")){
                                 password.setText("Password");
                                 password.setTextColor(Color.GRAY);
+                                password.setInputType(InputType.TYPE_CLASS_TEXT);
                             }
                         }
                     }
@@ -292,31 +304,31 @@ public class Login_Screen extends Fragment {
                     @Override
                     public void onClick(View view) {
 
+                        if( username.getText().toString().equals("Username") ||
+                                username.getText().toString().equals("")
+                        ){
+                            Toast toast = Toast.makeText(view.getContext(),R.string.empty_username_toast,Toast.LENGTH_LONG);
+                            toast.show();
+                            return;
+                        }
+
+                        if( password.getText().toString().equals("Password") ||
+                                password.getText().toString().equals("")
+                        ){
+                            Toast toast = Toast.makeText(view.getContext(),R.string.empty_password_toast,Toast.LENGTH_LONG);
+                            toast.show();
+                            return;
+                        }
+
                         if( is_valid_creds( username.getText().toString() , password.getText().toString() ) ) {
                             NavController nc = (NavController) Navigation.findNavController(view);
                             nc.navigate(R.id.action_login_Screen_to_main_Menu);
                         }
                         else{
 
-                            if( username.getText().toString().equals("Username") ||
-                                    username.getText().toString().equals("")
-                            ){
-                                Toast toast = Toast.makeText(view.getContext(),R.string.empty_username_toast,Toast.LENGTH_LONG);
-                                toast.show();
-                                return;
-                            }
-
-                            if( password.getText().toString().equals("Password") ||
-                                    password.getText().toString().equals("")
-                            ){
-                                Toast toast = Toast.makeText(view.getContext(),R.string.empty_password_toast,Toast.LENGTH_LONG);
-                                toast.show();
-                                return;
-                            }
-
                             // display a message saying it's invalid
-                            Toast toast = Toast.makeText(view.getContext(),R.string.invalid_credentials_toast,Toast.LENGTH_LONG);
-                            toast.show();
+                            // Toast toast = Toast.makeText(view.getContext(),R.string.invalid_credentials_toast,Toast.LENGTH_LONG);
+                            // toast.show();
 
                         }
 
@@ -327,15 +339,59 @@ public class Login_Screen extends Fragment {
 
     }
 
-    boolean is_valid_creds(String user, String pass){
+    public boolean is_valid_creds(String user, String pass){
 
-        // we can update this if we have back-end in the future
-        if( user.equals("tester") && pass.equals("tester") ){
-            return true;
+        Log.d("UserDB","the king is bak!");
+
+        UserAccount userAccount = new UserAccount(user,pass);
+
+        Log.d("UserDB","the useraccount is created succ!");
+
+        Log.d("UserDB","the absolute path is " + UserDatabase.myabsoluteVODKA );
+        Log.d("UserDB","the exact path is " + UserDatabase.path );
+
+        UserDatabase userDatabase = UserDatabase.load( new File(UserDatabase.myabsoluteVODKA,UserDatabase.path) );
+
+        if( userDatabase.equals(null) ){
+            Log.d("UserDB","your database is nully loaded!");
+        }
+        else{
+            Log.d("UserDB", "The database is not null!");
         }
 
+        if( userDatabase.usernames.equals(null) ){
+            Log.d("UserDB","your usernames are nully loaded!");
+        }
+        else{
+            Log.d("UserDB", "The usernames is not null!");
+        }
+
+        String is_registered = userDatabase.authenticate(userAccount);
+
+        Log.d("UserDB", "answer has been retrieved and is : " + is_registered);
+
+        if( is_registered.equals("SUCCESS") ){
+            return true;
+        }
+        if( is_registered.equals("ERROR: INVALIDE PASSWORD") ){
+            Toast toast = Toast.makeText(MYCL.getContext(),"Invalid Password!",Toast.LENGTH_LONG);
+            toast.show();
+            return false;
+        }
+
+        Toast toast = Toast.makeText(MYCL.getContext(),"Invalid Username!",Toast.LENGTH_LONG);
+        toast.show();
         return false;
 
+    }
+
+    public boolean onlywhitespace(String X){
+        for(int i = 0; i < X.length(); i++){
+            if(X.charAt(i) != ' '){
+                return false;
+            }
+        }
+        return true;
     }
 
     public int pxToDp(int px) {

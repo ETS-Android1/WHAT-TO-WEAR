@@ -1,6 +1,9 @@
 package com.tasdasdsaduiz.what_to_wear;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
@@ -13,15 +16,19 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.text.Editable;
 import android.text.InputType;
 import android.text.SpannableString;
+import android.text.TextWatcher;
 import android.text.style.UnderlineSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -52,6 +59,7 @@ public class Login_Screen extends Fragment {
     private String mParam1;
     private String mParam2;
     public ConstraintLayout MYCL;
+    public UserDatabase userDB;
 
     public Login_Screen() {
         // Required empty public constructor
@@ -78,6 +86,7 @@ public class Login_Screen extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -108,6 +117,16 @@ public class Login_Screen extends Fragment {
             );*/
         // catching the view as a constraind layout so that we can access its layout parameters
         MYCL = (ConstraintLayout) view;
+
+        MYCL.post(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        userDB = UserDatabase.load( new File(UserDatabase.myabsoluteVODKA,UserDatabase.path) );
+                    }
+                }
+        );
+
         super.onViewCreated(view, savedInstanceState);
 
         // this is to remove the physicall back button messing up the navigation
@@ -161,6 +180,7 @@ public class Login_Screen extends Fragment {
                     @Override
                     public void onClick(View view) {
 
+                        createForgotPassDialog();
                         // Here we have to add the dialog box for user to enter his e-mail
                         // and request a reset link
 
@@ -291,7 +311,11 @@ public class Login_Screen extends Fragment {
                     @Override
                     public void onClick(View view) {
                         NavController nc = (NavController) Navigation.findNavController(view);
-                        nc.navigate(R.id.action_login_Screen_to_main_Menu);
+
+                        Bundle bundle = new Bundle();
+                        bundle.putString("theusername",(String)("hacker"));
+                        nc.navigate(R.id.action_login_Screen_to_main_Menu,bundle);
+
                     }
                 }
         );
@@ -322,7 +346,13 @@ public class Login_Screen extends Fragment {
 
                         if( is_valid_creds( username.getText().toString() , password.getText().toString() ) ) {
                             NavController nc = (NavController) Navigation.findNavController(view);
-                            nc.navigate(R.id.action_login_Screen_to_main_Menu);
+
+                            // we need to pass the username in the bundle so that we can load his specific database
+                            Bundle bundle = new Bundle();
+                            bundle.putString("theusername",username.getText().toString());
+
+                            nc.navigate(R.id.action_login_Screen_to_main_Menu, bundle);
+
                         }
                         else{
 
@@ -398,6 +428,94 @@ public class Login_Screen extends Fragment {
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
+
+    public int dpTopx(int dp){
+        int px = ( dp * 100 ) / pxToDp(100);
+        return px;
+    }
+
+    // for pop UP ============================================ not easy to get this
+    public void createForgotPassDialog(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog dialog;
+
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View popapp = inflater.inflate(R.layout.forgotpasspopup, null);
+        Button sentbutt = popapp.findViewById(R.id.sentresetlink);
+        EditText emailforget = popapp.findViewById(R.id.email_forgot);
+        builder.setView(popapp);
+
+        emailforget.setHint("someone@example.com");
+        emailforget.addTextChangedListener(
+                new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    }
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    }
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        String neo = editable.toString();
+                        if(neo.length() != 0){
+                            sentbutt.setEnabled(true);
+                            sentbutt.setClickable(true);
+                        }
+                    }
+                }
+        );
+
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        //builder.setMessage("Enter e-mail to get reset link:")
+        //        .setTitle("Reset password");
+
+        /*builder.setPositiveButton("SENT LINK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+            }
+        });*/
+
+        // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+        dialog = builder.create();
+        dialog.show();
+
+        sentbutt.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if( !userDB.emailexists(emailforget.getText().toString()) ){
+                            Toast toast = Toast.makeText(view.getContext(),"Invalid e-mail",Toast.LENGTH_LONG);
+                            toast.setGravity(Gravity.TOP | Gravity.CENTER_VERTICAL, 0, 0);
+                            toast.show();
+                            return;
+                        }
+
+                        dialog.dismiss();
+                        Toast toast = Toast.makeText(view.getContext(),"Reset link sent to " + emailforget.getText().toString(),Toast.LENGTH_LONG);
+                        toast.show();
+                        return;
+                    }
+                }
+        );
+
+    }
+
+    /* ulysees */
+    /* View view = getLayoutInflater().inflate(R.layout.forgotpasspopup,null);
+        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(MYCL.getLayoutParams());
+        params.leftToLeft = 0;
+        params.rightToRight = 0;
+        params.horizontalBias = (float) 0.5;
+        params.topToTop = 0;
+        params.bottomToBottom = 0;
+        params.verticalBias = (float) 0.5;
+        view.setLayoutParams(params);
+        MYCL.addView(view);
+        view.getLayoutParams().width = dpTopx(350);
+        view.getLayoutParams().height = dpTopx(300);*/
 
 
 }

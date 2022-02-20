@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:background="@color/gold"
+    android:gravity="center"
+    >
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="Support our app by giving it 5 stars on Play Store!"
+        android:textSize="25dp"
+        android:textColor="@color/black"
+        android:textAlignment="center"
+        />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:src="@drawable/_starsblack"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="rate now!"
+        android:enabled="true"
+        android:clickable="true"
+        android:id="@+id/rate5starbutton"
+        ></Button>
+
+</LinearLayout>

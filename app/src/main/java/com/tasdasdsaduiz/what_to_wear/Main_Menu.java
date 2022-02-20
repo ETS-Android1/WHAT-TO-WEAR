@@ -1,8 +1,14 @@
 package com.tasdasdsaduiz.what_to_wear;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ColorSpace;
 import android.media.Image;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -15,14 +21,26 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.text.Editable;
+import android.text.Html;
+import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
+import android.text.method.ScrollingMovementMethod;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,6 +52,7 @@ public class Main_Menu extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    public static String the_username_argument = null;
 
     private String mParam1;
     private String mParam2;
@@ -62,6 +81,7 @@ public class Main_Menu extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -73,21 +93,44 @@ public class Main_Menu extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate the layout for this
+
+        // Load the users clothe's database
+        // ClotheDatabase: we create it if it is not there so that we can load it after int he
+
+        if(the_username_argument == null) {
+            // this code block is to create a database if there is none
+            Log.d("clothesDB", "gets in the onCreateView function no problem!");
+            String theusername = getArguments().getString("theusername");
+            the_username_argument = theusername;
+            Log.d("clothesDB", "the username is retrieved AND IT IS = " + theusername);
+            ClothesDB.myabsoluteVODKA = getActivity().getFilesDir();
+            String user_clothes_path = (String) ("Clothes_of_" + theusername + ".obj");
+            Log.d("clothesDB", "The paths are fixed!");
+            if ( !ClothesDB.checkObjectFileExists(new File(getActivity().getFilesDir(), user_clothes_path)) ) {
+                ClothesDB clothesDB = new ClothesDB(user_clothes_path);
+                ClothesDB.store(new File(getActivity().getFilesDir(), clothesDB.user_spec_path), clothesDB);
+                Log.d("clothesDB", "Created for the first time!");
+            } else {
+                // the database exists
+                Log.d("clothesDB", "The clothes database already exists!");
+            }
+        }
+
         return inflater.inflate(R.layout.fragment_main__menu, container, false);
+
     }
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
         super.onViewCreated(view, savedInstanceState);
 
+        Log.d("clothesDB","onviewcreated entered!");
         MYCL = (ConstraintLayout) view;
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
-                NavController nc = (NavController) Navigation.findNavController(view);
-                nc.navigate(R.id.action_main_Menu_to_login_Screen);
+                createLogoutDialog(view);
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(callback);//  addCallback(this,callback);
@@ -254,7 +297,15 @@ public class Main_Menu extends Fragment {
                                     else if( event.getAction() == MotionEvent.ACTION_DOWN){
                                         star.setImageDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.shiny_star));
                                     }
-                                    return true;
+                                    return false;
+                                }
+                            }
+                    );
+                    star.setOnClickListener(
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    createRateDialog();
                                 }
                             }
                     );
@@ -287,7 +338,15 @@ public class Main_Menu extends Fragment {
                                     else if( event.getAction() == MotionEvent.ACTION_DOWN){
                                         star2.setImageDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.privacy_policy_activated));
                                     }
-                                    return true;
+                                    return false;
+                                }
+                            }
+                    );
+                    star2.setOnClickListener(
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    createPrivacyDialog();
                                 }
                             }
                     );
@@ -320,7 +379,15 @@ public class Main_Menu extends Fragment {
                                     else if( event.getAction() == MotionEvent.ACTION_DOWN){
                                         star3.setImageDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.donate_activated));
                                     }
-                                    return true;
+                                    return false;
+                                }
+                            }
+                    );
+                    star3.setOnClickListener(
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    createDonateDialog();
                                 }
                             }
                     );
@@ -361,6 +428,192 @@ public class Main_Menu extends Fragment {
                 }
             }
         );
+
+
+    }
+
+    public void createLogoutDialog(View view){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog alertDialog;
+
+        builder.setMessage("Do you want to log out?").setTitle("Log out");
+
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                the_username_argument = null;
+                NavController nc = (NavController) Navigation.findNavController(view);
+                nc.navigate(R.id.action_main_Menu_to_login_Screen);
+            }
+        });
+
+        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        alertDialog = builder.create();
+
+        alertDialog.setOnShowListener(
+                new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+                        Button positive = alertDialog.getButton(Dialog.BUTTON_POSITIVE);
+                        positive.setTextSize(pxToDp(70));
+                        Button negative = alertDialog.getButton(Dialog.BUTTON_NEGATIVE);
+                        negative.setTextSize(pxToDp(70));
+                    }
+                }
+        );
+        alertDialog.show();
+
+
+    }
+
+    public int pxToDp(int px) {
+        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+    public void createRateDialog(){
+
+        // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog dialog;
+
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View popapp = inflater.inflate(R.layout.rate5stars, null);
+        Button rate = popapp.findViewById(R.id.rate5starbutton);
+        builder.setView(popapp);
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        //builder.setMessage("Enter e-mail to get reset link:")
+        //        .setTitle("Reset password");
+
+        /*builder.setPositiveButton("SENT LINK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+            }
+        });*/
+
+        // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+        dialog = builder.create();
+        dialog.show();
+
+        rate.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Uri uri = Uri.parse("https://play.google.com/store"); // missing 'http://' will cause crashed
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(intent);
+                        dialog.dismiss();
+                        Toast toast = Toast.makeText(view.getContext(),"Thank you!",Toast.LENGTH_LONG);
+                        toast.show();
+                        return;
+                    }
+                }
+        );
+
+    }
+
+    public void createPrivacyDialog(){
+
+        // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog dialog;
+
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View popapp = inflater.inflate(R.layout.privacypolicypop, null);
+        //Button rate = popapp.findViewById(R.id.rate5starbutton);
+        builder.setView(popapp);
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        //builder.setMessage("Enter e-mail to get reset link:")
+        //        .setTitle("Reset password");
+
+        /*builder.setPositiveButton("SENT LINK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+            }
+        });*/
+
+        // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+        dialog = builder.create();
+        dialog.show();
+
+        /*rate.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Uri uri = Uri.parse("https://play.google.com/store"); // missing 'http://' will cause crashed
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(intent);
+                        dialog.dismiss();
+                        Toast toast = Toast.makeText(view.getContext(),"Thank you!",Toast.LENGTH_LONG);
+                        toast.show();
+                        return;
+                    }
+                }
+        );*/
+
+    }
+
+    public void createDonateDialog(){
+
+        // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog dialog;
+
+        // 2. whatever ws this steop called
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View popapp = inflater.inflate(R.layout.donatepop, null);
+        builder.setView(popapp);
+
+        TextView textView = popapp.findViewById(R.id.charitiestv);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            textView.setText(Html.fromHtml( "<h1>British Red Cross</h1>" +
+                    "</br> Donate clothes by post for free! </br> " +
+                    "</br> <a href=\"https://giftshop.redcross.org.uk/products/free-donation-bag\"> Visit here!</a> "+
+                    "</hr><h1>Stadsmissionen</h1>" +
+                            "</br>No one chooses their own home - homelessness can affect everyone. We offer emergency help with food, heating and hygiene. Become a monthly donor and we will make a difference together.</br> " +
+                            "</br> <a href=\"https://www.stadsmissionen.se/\"> Visit here!</a> "+
+                    "</hr><h1>Myrorna</h1>" +
+                            "</br>Smutsigt, utslitet, trasigt eller varor som är obrukbara som vi inte kan sälja i Myrornas butiker. Det som lämnas in till oss som inte kan säljas medför stora kostnader. Vi reserverar oss för att tacka nej till det vi bedömer inte går att sälja vidare.</br> " +
+                            "</br> <a href=\"https://www.myrorna.se/lamna-in/\"> Visit here!\n</a> "+
+                    "</hr><h1>Swedish Red Cross</h1>" +
+                            "</br> Donate clothes for free! </br> " +
+                            "</br> <a href=\"https://www.rodakorset.se/\"> Visit here!</a> </hr></hr></br></br>" +
+                            "</br> \t </br> " +
+                            "</br> \t </br> " +
+                            "</br> =================== </br> "
+                    , Html.FROM_HTML_MODE_COMPACT));
+            textView.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            textView.setText(Html.fromHtml( "<h1>British Red Cross</h1>" +
+                    "</br> Donate clothes by post for free! </br> " +
+                    "</br> <a href=\"https://giftshop.redcross.org.uk/products/free-donation-bag\"> Visit here!</a> "+
+                    "</hr><h1>Stadsmissionen</h1>" +
+                    "</br>No one chooses their own home - homelessness can affect everyone. We offer emergency help with food, heating and hygiene. Become a monthly donor and we will make a difference together.</br> " +
+                    "</br> <a href=\"https://www.stadsmissionen.se/\"> Visit here!</a> "+
+                    "</hr><h1>Myrorna</h1>" +
+                    "</br>Smutsigt, utslitet, trasigt eller varor som är obrukbara som vi inte kan sälja i Myrornas butiker. Det som lämnas in till oss som inte kan säljas medför stora kostnader. Vi reserverar oss för att tacka nej till det vi bedömer inte går att sälja vidare.</br> " +
+                    "</br> <a href=\"https://www.myrorna.se/lamna-in/\"> Visit here!\n</a> "+
+                    "</hr><h1>Swedish Red Cross</h1>" +
+                    "</br> Donate clothes for free! </br> " +
+                    "</br> <a href=\"https://www.rodakorset.se/\"> Visit here!</a> </hr></hr></br></br>" +
+                    "</br> \t </br> " +
+                    "</br> \t </br> " +
+                    "</br> =================== </br> "));
+            textView.setMovementMethod(LinkMovementMethod.getInstance());
+        }
+
+        // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+        dialog = builder.create();
+        dialog.show();
 
 
     }

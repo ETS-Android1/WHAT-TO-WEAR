@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="350dp"
+    android:layout_height="200dp"
+    android:background="@color/gold"
+    android:gravity="center"
+    >
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+
+        android:text="Enter your email below to get a password reset link:"
+        android:textSize="25dp"
+        android:textColor="@color/black"
+
+        android:textAlignment="center"
+
+        />
+
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/email_forgot" />
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="send reset link"
+        android:enabled="false"
+        android:clickable="false"
+        android:id="@+id/sentresetlink"
+        ></Button>
+
+</LinearLayout>

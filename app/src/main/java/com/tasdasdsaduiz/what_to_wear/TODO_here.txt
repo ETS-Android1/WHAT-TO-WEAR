@@ -12,4 +12,5 @@
     + make it so that edit boxes colors change when the email exists or not
     + make thread for animation when pressing the register button during which all become un-clickable
     + it should last for 1 sec and at the same time the object saving should be happening.
+    + make it ALL SANS-SERIF
 */

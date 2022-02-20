@@ -1,6 +1,7 @@
 package com.tasdasdsaduiz.what_to_wear;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
 import android.content.Context;
 import android.graphics.Rect;

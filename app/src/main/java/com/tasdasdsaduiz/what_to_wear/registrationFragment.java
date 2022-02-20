@@ -236,6 +236,12 @@ public class registrationFragment extends Fragment {
                                             return;
                                         }
 
+                                        if( !isvalidemail(email.getText().toString()) ){
+                                            Toast toast = Toast.makeText(getContext(),"Invalid e-mail",Toast.LENGTH_LONG);
+                                            toast.show();
+                                            return;
+                                        }
+
                                         if( password.getText().toString().length() < 8 ){
                                             Toast toast = Toast.makeText(getContext(),"The password length must be at least 8.",Toast.LENGTH_LONG);
                                             toast.show();
@@ -380,6 +386,24 @@ public class registrationFragment extends Fragment {
             }
         }
         return true;
+    }
+
+    public boolean isvalidemail(String X){
+        boolean foundat = false;
+        boolean founddot = false;
+
+        for(int i = 0; i < X.length(); i++){
+            if(( X.charAt(i) == '@' ) && (foundat == false)){
+                foundat = true;
+                continue;
+            }
+            if( (X.charAt(i)=='.') && (foundat==true) ){
+                founddot = true;
+            }
+        }
+
+        return (boolean)( foundat && founddot );
+
     }
 
     public void katastrofi(View item){

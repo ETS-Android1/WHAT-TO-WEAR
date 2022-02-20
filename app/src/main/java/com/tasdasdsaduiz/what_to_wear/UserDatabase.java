@@ -126,6 +126,14 @@ public class UserDatabase implements Serializable{
 
     }
 
+    public boolean emailexists(String X){
+        Boolean result_email = hashemail.get( X );
+        if( (result_email != null) && (result_email == true) ){
+            return true;
+        }
+        return false;
+    }
+
     // should this be static instead!?
     public String authenticate(UserAccount ua){
 

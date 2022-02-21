@@ -22,8 +22,15 @@ public class TagsDB implements Serializable {
     public ArrayList <String> tags;
     public String user_spec_path = null; // this path should be different for each user
 
-    public TagsDB(){
+    public TagsDB(String user_spec_path){
+        this.user_spec_path = user_spec_path;
         this.tags = new ArrayList<String>();
+        tags.add("Professional");
+        tags.add("Trendy");
+        tags.add("Casual");
+        tags.add("Sporty");
+        tags.add("Chill");
+        tags.add("Party");
     }
 
     public static boolean checkObjectFileExists(File f){

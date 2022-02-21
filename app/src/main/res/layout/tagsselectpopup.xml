@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="370dp"
+    android:layout_marginTop="20dp"
+    android:layout_marginBottom="20dp"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    android:gravity="center"
+    android:layout_height="wrap_content"
+    android:id="@+id/tagstable"
+    >
+
+    <TableRow
+        android:gravity="center"
+        >
+
+        <Button
+            android:layout_width="84dp"
+            android:layout_height="39dp"
+            android:text="Chill"
+            android:textSize="12dp"
+            app:cornerRadius="32dp"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <Button
+            android:layout_width="84dp"
+            android:layout_height="39dp"
+            android:text="Chill"
+            android:textSize="12dp"
+            app:cornerRadius="32dp"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <Button
+            android:layout_width="84dp"
+            android:layout_height="39dp"
+            android:text="Chill"
+            android:textSize="12dp"
+            app:cornerRadius="32dp"
+            tools:ignore="TouchTargetSizeCheck" />
+
+    </TableRow>
+
+    <TableRow
+        android:gravity="center"
+        >
+
+        <Button
+            android:layout_width="84dp"
+            android:layout_height="39dp"
+            android:text="Chill"
+            android:textSize="12dp"
+            app:cornerRadius="32dp"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <Button
+            android:layout_width="84dp"
+            android:layout_height="39dp"
+            android:text="Chill"
+            android:textSize="12dp"
+            app:cornerRadius="32dp"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <Button
+            android:layout_width="84dp"
+            android:layout_height="39dp"
+            android:text="Chill"
+            android:textSize="12dp"
+            app:cornerRadius="32dp"
+            tools:ignore="TouchTargetSizeCheck" />
+
+    </TableRow>
+
+</TableLayout>

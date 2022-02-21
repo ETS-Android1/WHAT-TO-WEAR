@@ -1,8 +1,11 @@
 package com.tasdasdsaduiz.what_to_wear;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -24,11 +28,16 @@ import androidx.navigation.Navigation;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.Toast;
 
 
@@ -48,6 +57,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.google.android.material.tabs.TabLayout;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,6 +66,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+
+import static com.tasdasdsaduiz.what_to_wear.R.color.design_default_color_primary;
+import static com.tasdasdsaduiz.what_to_wear.R.drawable.*;
 
 
 /**
@@ -70,6 +84,7 @@ public class Wardrobe extends Fragment {
     public int slot_to_add_i; // THIS MUST REMAIN UPDATED EVEN WHEN THE CLOTHE IS DELETED
     public int slot_to_add_j;
     public Bitmap bitmap_to_save;
+    public ArrayList<String> active_tags;
 
 
     // to put the bitmap in the preview
@@ -196,6 +211,7 @@ public class Wardrobe extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        active_tags = new ArrayList<String>();
                         createAddClotheDialog();
                         // pickfromgallery();
                     }
@@ -215,10 +231,297 @@ public class Wardrobe extends Fragment {
 
     }
 
+    public void createTagsDialog(){
+
+        Log.d("tagsDB","we are entering the create dialog");
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog dialog;
+
+        builder.setTitle("Tags Selection:");
+
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View popapp = inflater.inflate(R.layout.tagsselectpopup, null);
+
+        Log.d("tagsDB","the popup xml is added no problem");
+
+        String user_tags_path = (String) ("Tags_of_" + Main_Menu.the_username_argument + ".obj");
+        // we load the database
+        TagsDB tagsDB = TagsDB.load( new File(getActivity().getFilesDir(), user_tags_path) );
+
+        Log.d("tagsDB","the tags datbase is loade3d");
+
+        TableLayout tabLayout = (TableLayout) popapp.findViewById(R.id.tagstable);
+        tabLayout.removeAllViews();
+
+        Log.d("tagsDB","the table layout is cleared");
+
+        TableRow EG = new TableRow(getActivity());
+        tabLayout.addView(EG);
+        EG.setBackgroundColor(Color.BLUE);
+        Button EGbutton = new Button(getActivity());
+        EG.addView(EGbutton);
+        EGbutton.getLayoutParams().height = dpTopx(20);
+        EGbutton.setTextColor(Color.RED);
+        EG.setVisibility(View.INVISIBLE);
+        EG.setClickable(false);
+        EGbutton.setVisibility(View.INVISIBLE);
+        EGbutton.setClickable(false);
+
+        TableRow current_row = new TableRow(getActivity());
+        current_row.setGravity(Gravity.CENTER);
+        tabLayout.addView(current_row);
+
+        Log.d("tagsDB","the table row is added");
+
+        for(int i=0; i < tagsDB.tags.size(); i++){
+
+            String to_add = tagsDB.tags.get(i);
+            Log.d("tagsDB","next tag name succ retrieved = " + to_add);
+
+            Button button = new Button(getActivity());
+            current_row.addView(button);
+
+            Log.d("tagsDB","button added in the table row");
+
+            button.setText(to_add);
+            button.setTextSize(12);
+
+            Log.d("tagsDB","button text configed");
+
+            button.getLayoutParams().height = dpTopx(39);
+            button.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
+
+            // we need to check if the text is in the ArrayList
+            boolean isin = false;
+
+            for(int ix=0;ix<active_tags.size();ix++){
+                if( active_tags.get(ix).toString().equals(to_add) ){
+                    isin = true;
+                    break;
+                }
+            }
+            if( !isin ){
+                button.setBackground( ContextCompat.getDrawable( getActivity() , R.drawable.tagsbutton) );
+                button.setTextColor( Color.parseColor("#7B1FA2") );
+            }
+            else{
+                button.setBackground( ContextCompat.getDrawable( getActivity() , R.drawable.activatedtag ) );
+                button.setTextColor( Color.parseColor("#FFFFFFFF") );
+            }
+
+
+            //Log.d("draw","thedraw = " + button.getBackground() )
+            button.setOnClickListener(
+                    new View.OnClickListener() {
+                        @SuppressLint("ResourceAsColor")
+                        @Override
+                        public void onClick(View view) {
+                            if( button.getCurrentTextColor() == Color.parseColor("#FFFFFFFF") ){
+                                button.setBackground( ContextCompat.getDrawable( getActivity() , R.drawable.tagsbutton) );
+                                button.setTextColor( Color.parseColor("#7B1FA2") );
+                            }
+                            else{
+                                button.setBackground( ContextCompat.getDrawable( getActivity() , activatedtag) );
+                                button.setTextColor( Color.parseColor("#FFFFFFFF") );
+                            }
+                        }
+                    }
+            );
+
+            Log.d("tagsDB","button height and width configed");
+
+            if( i % 3 == 0 && i > 0){
+                // we need to remove the last added button
+                current_row.removeView(button);
+                current_row = new TableRow(getActivity());
+                current_row.setGravity(Gravity.CENTER);
+                tabLayout.addView(current_row);
+                current_row.addView(button);
+            }
+
+        }
+
+        TableRow EG2 = new TableRow(getActivity());
+        tabLayout.addView(EG2);
+        EG2.setBackgroundColor(Color.BLUE);
+        Button EGbutton2 = new Button(getActivity());
+        EG2.addView(EGbutton2);
+        EGbutton2.getLayoutParams().height = dpTopx(20);
+        EGbutton2.setTextColor(Color.RED);
+        EG2.setVisibility(View.INVISIBLE);
+        EG2.setClickable(false);
+        EGbutton2.setVisibility(View.INVISIBLE);
+        EGbutton2.setClickable(false);
+
+        builder.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int id) {
+                // User clicked OK button
+                dialogInterface.dismiss();
+            }
+        });
+
+        // to show the dialog
+        builder.setView(popapp);
+        dialog = builder.create();
+
+        dialog.show();
+
+        dialog.setOnDismissListener(
+                new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+
+                        Log.d("Dismissal","dismissal entered");
+                        active_tags = new ArrayList<String>();
+                        Log.d("Dismissal","the active tags have been reinitialized");
+                        // we need to gather the tags that are active
+                        Log.d("Dismissal","The child count for the TableLayout = " + tabLayout.getChildCount() );
+
+                        for(int i = 0; i < tabLayout.getChildCount(); i++){
+                            TableRow tb = (TableRow) tabLayout.getChildAt(i);
+                            for(int j=0; j<tb.getChildCount(); j++) {
+
+                                Button v = (Button) tb.getChildAt(j);
+                                Log.d("Dismissal", "the child at tb = " + i + "j = " + " is retrived");
+
+                                if (v.getCurrentTextColor() == Color.parseColor("#FFFFFFFF")) {
+                                    Log.d("Dismissal", "color testing success");
+                                    active_tags.add(v.getText().toString());
+                                    Log.d("Dismissal", "adding it");
+                                }
+
+                            }
+
+                        }
+
+                    }
+                }
+        );
+
+    }
+
+    public void createTypeDialog(){
+
+        Log.d("type","we are entering the create dialog");
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog dialog;
+
+        builder.setTitle("Select Type:");
+        builder.setMessage("Select Primary and Secondary types.");
+
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View popapp = inflater.inflate(R.layout.typeselectionpopup, null);
+
+        MainClotheType mainClotheType = new MainClotheType();
+
+        // load the maintypes
+        LinearLayout scrollViewprim = popapp.findViewById(R.id.primaryscroll);
+        scrollViewprim.removeAllViews();
+
+        for(int i = 0; !( mainClotheType.maintypes[i] == null ); i++){
+
+            String to_add = mainClotheType.maintypes[i];
+            Log.d("type","next tag name succ retrieved = " + to_add);
+
+            Button button = new Button(getActivity());
+            scrollViewprim.addView(button);
+
+            Log.d("type","button added in the scroll view");
+
+            button.setText(to_add);
+            button.setTextSize( 12 );
+
+            Log.d("type","button text configed");
+
+            button.getLayoutParams().height = dpTopx(39);
+            button.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
+
+            button.setBackground( ContextCompat.getDrawable( getActivity() , R.drawable.tagsbutton) );
+            button.setTextColor( Color.parseColor("#7B1FA2") );
+
+            button.setOnClickListener(
+                    new View.OnClickListener() {
+                        @SuppressLint("ResourceAsColor")
+                        @Override
+                        public void onClick(View view) {
+
+                            // search which button is parple and make it white
+                            for(int ji = 0; ji < scrollViewprim.getChildCount(); ji++){
+                                Button under = (Button) scrollViewprim.getChildAt(ji);
+                                if( under.getCurrentTextColor() == Color.parseColor("#FFFFFFFF") ){
+                                    under.setBackground( ContextCompat.getDrawable( getActivity() , R.drawable.tagsbutton) );
+                                    under.setTextColor( Color.parseColor("#7B1FA2") );
+                                    // don't break here
+                                }
+                            }
+
+                            // make this one purple
+                            button.setBackground( ContextCompat.getDrawable( getActivity() , activatedtag) );
+                            button.setTextColor( Color.parseColor("#FFFFFFFF") );
+
+                            // load the subtypes to the secondary scroll
+                            String maintype = button.getText().toString();
+
+                            MainClotheType mainClotheType1 = new MainClotheType();
+
+                            for(int ji=0; !( mainClotheType1.maintypes[ji] == null ); ji++){
+                                if( mainClotheType1.maintypes[ji].toString().equals(button.getText().toString()) ){
+                                    LinearLayout scrollViewSecondary = popapp.findViewById(R.id.secondaryscroll);
+                                    scrollViewSecondary.removeAllViews();
+
+                                    for(int ij=0; mainClotheType1.subtypes[ji].length > ij; ij++){
+
+                                        String to_add2 = mainClotheType.subtypes[ji][ij];
+                                        Log.d("type","adding subtype = " + to_add2);
+
+                                        Button button_secondary = new Button(getActivity());
+                                        scrollViewSecondary.addView(button_secondary);
+
+                                        Log.d("type","button added in the secondary scroll view");
+
+                                        button_secondary.setText(to_add2);
+                                        button_secondary.setTextSize( 12 );
+
+                                        Log.d("type","button secondary text configed");
+
+                                        button_secondary.getLayoutParams().height = dpTopx(39);
+                                        button_secondary.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
+
+                                        button_secondary.setBackground( ContextCompat.getDrawable( getActivity() , R.drawable.tagsbutton) );
+                                        button_secondary.setTextColor( Color.parseColor("#7B1FA2") );
+
+                                        // here add the listener for the subtype to save they type
+
+                                    }
+                                    break;
+                                }
+                            }
+
+                        }
+                    }
+            );
+
+        }
+
+        builder.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int id) {
+                // User clicked OK button
+                dialogInterface.dismiss();
+            }
+        });
+
+        // to show the dialog
+        builder.setView(popapp);
+        dialog = builder.create();
+
+        dialog.show();
+
+    }
+
     public void createAddClotheDialog(){
 
         // check if we could load the main
-        MainClotheType mainClotheType = new MainClotheType();
+        // MainClotheType mainClotheType = new MainClotheType();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         AlertDialog dialog;
@@ -236,6 +539,31 @@ public class Wardrobe extends Fragment {
                     }
                 }
         );
+
+        Button selecttags = (Button) popapp.findViewById(R.id.selecttags);
+        selecttags.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        createTagsDialog();
+
+                    }
+                }
+        );
+
+        Button selectype = (Button) popapp.findViewById(R.id.selecttype);
+        selectype.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        createTypeDialog();
+
+                    }
+                }
+        );
+
 
         Button addcloth = (Button) popapp.findViewById(R.id.addtowardrobe);
 
@@ -290,7 +618,7 @@ public class Wardrobe extends Fragment {
                         }
 
                         // retrieve filters
-                        ArrayList <String> tags = new ArrayList<String>();
+                        ArrayList <String> tags = new ArrayList<String>(active_tags);
                         String type = "";
 
                         // now fill the clothes data fields

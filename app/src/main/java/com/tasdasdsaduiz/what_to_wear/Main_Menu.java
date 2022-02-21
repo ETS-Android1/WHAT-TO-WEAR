@@ -118,6 +118,17 @@ public class Main_Menu extends Fragment {
 
             // let us do the same for the tags database
             Log.d("tagsDB", "gets in the initial check!");
+            TagsDB.myabsoluteVODKA = getActivity().getFilesDir();
+            String user_tags_path = (String) ("Tags_of_" + theusername + ".obj");
+            Log.d("tagsDB","The paths is fixed");
+            if ( !TagsDB.checkObjectFileExists(new File(getActivity().getFilesDir(), user_tags_path)) ) {
+                TagsDB tagsDB = new TagsDB(user_tags_path);
+                TagsDB.store(new File(getActivity().getFilesDir(), tagsDB.user_spec_path), tagsDB);
+                Log.d("tagsDB", "Created for the first time!");
+            } else {
+                // the database exists
+                Log.d("tagsDB", "The tags database already exists!");
+            }
 
         }
 

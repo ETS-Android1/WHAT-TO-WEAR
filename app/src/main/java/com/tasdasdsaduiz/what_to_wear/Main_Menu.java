@@ -115,6 +115,10 @@ public class Main_Menu extends Fragment {
                 // the database exists
                 Log.d("clothesDB", "The clothes database already exists!");
             }
+
+            // let us do the same for the tags database
+            Log.d("tagsDB", "gets in the initial check!");
+
         }
 
         return inflater.inflate(R.layout.fragment_main__menu, container, false);

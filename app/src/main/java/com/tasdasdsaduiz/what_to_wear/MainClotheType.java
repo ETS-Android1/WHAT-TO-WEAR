@@ -75,9 +75,6 @@ public class MainClotheType {
         float [] wst8 = {0.2f,0.15f,0.15f};
         subweight[8] = wst8;
 
-
-
-
     }
 
 }

@@ -27,8 +27,8 @@ public class MainClotheType {
         subweight[1] = wst1;
 
         // add the data for 1
-        maintypes[2] = "Swimming-wear";
-        String [] st2 = {"Swimming-suit", "Shorts", "Bikini"};
+        maintypes[2] = "Swimwear";
+        String [] st2 = {"Swimsuit", "Shorts", "Bikini"};
         subtypes[2] = st2;
         float [] wst2 = {0.2f,0.2f,0.1f};
         subweight[2] = wst2;

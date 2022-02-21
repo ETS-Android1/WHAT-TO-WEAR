@@ -29,51 +29,51 @@ public class MainClotheType {
         // add the data for 1
         maintypes[1] = "Swimming-wear";
         String [] st2 = {"Swimming-suit", "Shorts", "Bikini"};
-        subtypes[1] = st1;
+        subtypes[1] = st2;
         float [] wst2 = {0.2f,0.2f,0.1f};
-        subweight[1] = wst1;
+        subweight[1] = wst2;
 
         // add the data for 1
         maintypes[1] = "Dress";
         String [] st3 = {"Long", "Short", "Evening-dress", "Wedding-dress" };
-        subtypes[1] = st1;
+        subtypes[1] = st3;
         float [] wst3 = {0.2f,0.35f,0.5f,2f};
-        subweight[1] = wst1;
+        subweight[1] = wst3;
 
         // add the data for 1
         maintypes[1] = "Pants";
         String [] st4 = {"Business", "Jeans", "Chinos"};
-        subtypes[1] = st1;
+        subtypes[1] = st4;
         float [] wst4 = {0.6f,1f,0.5f};
-        subweight[1] = wst1;
+        subweight[1] = wst4;
 
         // add the data for 1
         maintypes[1] = "Pullover";
         String [] st5 = {"Hoodie", "Sweatshirt", "Cardigan", "Sweater"};
-        subtypes[1] = st1;
+        subtypes[1] = st5;
         float [] wst5 = {0.5f,0.4f,0.5f, 0.5f};
-        subweight[1] = wst1;
+        subweight[1] = wst5;
 
         // add the data for 1
         maintypes[1] = "Jacket";
         String [] st6 = {"Rain-jacket", "Wind-jacket", "Winter-jacket", "Down-jacket", "Summer-jacket", "Autumn-jacket"};
-        subtypes[1] = st1;
+        subtypes[1] = st6;
         float [] wst6 = {1.2f,0.3f,1.5f, 0.4f, 1.2f};
-        subweight[1] = wst1;
+        subweight[1] = wst6;
 
         // add the data for 1
         maintypes[1] = "Gloves";
         String [] st7 = {"Leather", "Wool", "Synthetic"};
-        subtypes[1] = st1;
+        subtypes[1] = st7;
         float [] wst7 = {0.4f,0.3f,0.4f};
-        subweight[1] = wst1;
+        subweight[1] = wst7;
 
         // add the data for 1
         maintypes[1] = "Headgear";
         String [] st8 = {"Hat-winter","Hat-summer" ,"Cap"};
-        subtypes[1] = st1;
+        subtypes[1] = st8;
         float [] wst8 = {0.2f,0.15f,0.15f};
-        subweight[1] = wst1;
+        subweight[1] = wst8;
 
 
 

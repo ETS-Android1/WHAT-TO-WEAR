@@ -17,15 +17,16 @@ import java.util.Scanner;
 
 public class Clothe implements Serializable{
 
-    public int ID;
-    public ArrayList<String> filters; // these are essentially the tags
-    public String image_path = null;
+    public long ID; // this is very important
+    public ArrayList <String> filters; // these are essentially the tags
+    public File image_dir = null;
     public String type = null;
 
-    public Clothe(int id, ArrayList<String> infilters, String image){
+    public Clothe(long id, ArrayList<String> infilters, File image, String type){
         this.ID = id;
         this.filters = new ArrayList<String>(infilters);
-        this.image_path = image;
+        this.image_dir = image;
+        this.type = type;
     }
 
     public boolean andfilter(ArrayList <String> input_filters){

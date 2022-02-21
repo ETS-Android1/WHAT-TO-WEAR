@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,9 +48,13 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 
 /**
@@ -60,8 +66,11 @@ public class Wardrobe extends Fragment {
 
     public ConstraintLayout MYCL;
     public ImageView receiver_preview;
-    public Clothe consistent_pinakas_rouxon[][];
+    // public Clothe consistent_pinakas_rouxon[][];
+    public int slot_to_add_i; // THIS MUST REMAIN UPDATED EVEN WHEN THE CLOTHE IS DELETED
+    public int slot_to_add_j;
     public Bitmap bitmap_to_save;
+
 
     // to put the bitmap in the preview
     public void PUTin(Uri uri) throws IOException {
@@ -236,23 +245,62 @@ public class Wardrobe extends Fragment {
                     @Override
                     public void onClick(View view) {
 
-                        // ADD clothe to database here
+                        // to avoid crashes make all view unclickable here!!!
+                        // TODO: MAKE THEM ALL UNCK
 
-                        /*ContextWrapper cw = new ContextWrapper(getApplicationContext());
-                        File directory = cw.getDir("profile", Context.MODE_PRIVATE);
-                        if (!directory.exists()) {
-                            directory.mkdir();
+                        Log.d("justadd","Entering the listener!");
+
+                        // Load the database
+                        // now load the cloths into the n X 3 array to feed it on the the view
+                        String user_clothes_path = (String) ("Clothes_of_" + Main_Menu.the_username_argument + ".obj");
+                        // we load the database
+                        ClothesDB clothesDB = ClothesDB.load( new File(getActivity().getFilesDir(), user_clothes_path) );
+                        Log.d("justadd","Clothes database loaded!");
+
+                        // ADD clothe to database here (and to the consistent table)
+                        long clothe_ID = clothesDB.getNext_id();
+
+                        // save the image located in bitmap_to_save variable to a specific path
+
+                        // we need the file which points to the correct direcotry
+                        String clothe_path = (String) ("Clothe_" + clothe_ID + "_of_" + Main_Menu.the_username_argument + ".obj");
+                        File directory = new File( getActivity().getFilesDir() , clothe_path );
+                        try {
+                            FileOutputStream fileOutputStream = new FileOutputStream(directory);
+                            bitmap_to_save.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream);
+                            Log.d("justadd","Success the bitmap file is saved!");
+                            // this supposedly saves the bitmap so all we need to retrieve it is the path
                         }
-                        File mypath = new File(directory, "thumbnail.png");
-                        // we first of all need to save the bitmap as object
-                        FileOutputStream fos = null;
-                        String image_path = getActivity().getFilesDir();
-                        try{
-                            fos = new FileOutputStream()
-                        }*/
+                        catch (Exception e){
+                            Log.d("justadd","could not write the object for the new clothe");
+                        }
+
+                        // retrieve filters
+                        ArrayList <String> tags = new ArrayList<String>();
+                        String type = "";
+
+                        // now fill the clothes data fields
+                        Clothe clothe = new Clothe(clothe_ID,tags,directory,type);
+                        Log.d("justadd","clothe created!");
+
+                        // we add it to the database
+                        clothesDB.clotheArrayList.add(clothe);
+                        ClothesDB.store( new File(getActivity().getFilesDir(), user_clothes_path) , clothesDB );
+                        Log.d("justadd","clothe added and database updated!");
+
+                        // let's update the consistent table
+                        //consistent_pinakas_rouxon[slot_to_add_i][slot_to_add_j] = clothe;
+                        //Log.d("justadd","consistent table updated!");
+
+                        putAt(slot_to_add_i,slot_to_add_j,clothe);
+                        Log.d("justadd","clothe putted at view!");
 
                         // THEN add it to the
                         dialog.dismiss();
+
+                        // RESTORE! => to avoid crashes make all view unclickable here!!!
+                        // TODO: RESTORE -> MAKE THEM ALL UNCK
+
                     }
                 }
         );
@@ -266,31 +314,37 @@ public class Wardrobe extends Fragment {
         // clear the mock/previews clothes
         ConstraintLayout clothes_plain = MYCL.findViewById(R.id.ClothesPlain);
         clothes_plain.removeAllViews();
+        slot_to_add_i = 0;
+        slot_to_add_j = 0;
 
         // now load the cloths into the n X 3 array to feed it on the the view
         String user_clothes_path = (String) ("Clothes_of_" + Main_Menu.the_username_argument + ".obj");
+        Log.d("justadd","the path for the clothDB is " + user_clothes_path);
         // we load the database
         ClothesDB clothesDB = ClothesDB.load( new File(getActivity().getFilesDir(), user_clothes_path) );
 
         // defining the 2d array
         int div = clothesDB.clotheArrayList.size() / 3;
-        int mod = ( clothesDB.clotheArrayList.size() % 3 == 0 ) ? 1 : 0;
-        consistent_pinakas_rouxon = new Clothe[ div + mod ][3];
+        int mod = ( clothesDB.clotheArrayList.size() % 3 != 0 ) ? 1 : 0;
+        //consistent_pinakas_rouxon = new Clothe[ div + mod ][3]; // resetting the table from the bat
 
         int tot = 0;
 
+        Log.d("justadd","We have div = " + div + "and mod = " + mod);
         for(int i = 0; i < div+mod; i++){
             for(int j = 0; j < 3; j++){
 
                 // check if we are out-of-bounds
                 tot++;
                 if( tot > clothesDB.clotheArrayList.size() ){
+                    Log.d("justadd","out of bounds of the clothes array list");
                     break;
                 }
 
-                consistent_pinakas_rouxon[i][j] = clothesDB.clotheArrayList.get(tot-1);
+                // consistent_pinakas_rouxon[i][j] = clothesDB.clotheArrayList.get(tot-1);
                 // we put the clothe in the wardrobe view
-                putAt(i,j,consistent_pinakas_rouxon[i][j]);
+                putAt(i,j, clothesDB.clotheArrayList.get(tot-1) );
+                Log.d("justadd","putted i = " + i + " and j = " + j);
 
             }
         }
@@ -299,12 +353,77 @@ public class Wardrobe extends Fragment {
 
     void putAt(int i, int j, Clothe clothe){
 
-        // first create the imageview
-        ImageView imageView;
+        // open the next slot to add
+        slot_to_add_i = i;
+        slot_to_add_j = j+1;
+        if(slot_to_add_j > 2){
+            slot_to_add_i++;
+            slot_to_add_j = 0;
+        }
+        Log.d("justadd","next open slot coordinates fixed!");
 
+        // first create the imageview and set bitmap and properties
+        ImageView imageView = new ImageView(getActivity());
 
+        try {
+            FileInputStream fileInputStream = new FileInputStream(clothe.image_dir);
+            Log.d("justadd","fileinputstream fine!");
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+            Log.d("justadd","buffered inputstream fine!");
+            Bitmap bitmap = BitmapFactory.decodeStream(bufferedInputStream);
+            Log.d("justadd","bitmap decoded fine!");
+            imageView.setImageBitmap(bitmap);
+            Log.d("justadd","bitmap set fine!");
+        }
+        catch (Exception e){
+            Log.d("justadd","The image could not be loaded to the imageview");
+        }
 
+        ConstraintLayout clothes_plain = MYCL.findViewById(R.id.ClothesPlain);
+        Log.d("justadd","layout retrieved correctly!");
 
+        // now add the imageview to the layout
+        clothes_plain.addView(imageView);
+        Log.d("justadd","view added successfully!");
+
+        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(clothes_plain.getLayoutParams());
+
+        params.topMargin = dpTopx(10);
+        params.leftMargin = dpTopx(10);
+
+        if( i == 0 ){
+            params.topToTop = 0;
+        }
+        else{
+            params.topToBottom = ( (ImageView) clothes_plain.findViewById( (i*3) + 1 ) ).getId();
+        }
+        if(j == 0){
+            params.leftToLeft = 0;
+        }
+        else{
+            params.leftToRight = ( (ImageView) clothes_plain.findViewById( ( (i+1) *3 ) + (j) ) ).getId();
+        }
+        imageView.setLayoutParams(params);
+
+        imageView.getLayoutParams().height = dpTopx(110);
+        imageView.getLayoutParams().width = dpTopx(110);
+        Log.d("clothes","height and width set successfully");
+
+        imageView.setId( (i+1) * 3 + (j + 1) ); // very important stuff here
+        Log.d("clothes","id set successfully");
+
+        // now adjust it's margins based on the ids of the previous ones (top and left)
+
+    }
+
+    public int pxToDp(int px) {
+        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+    public int dpTopx(int dp){
+        int px = ( dp * 100 ) / pxToDp(100);
+        return px;
     }
 
 

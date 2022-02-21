@@ -62,160 +62,17 @@
             android:id="@+id/ClothesPlain"
             >
 
-            <ImageView
-                android:id="@+id/button_1_1"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/boots"
+            <TextView
+                android:layout_width="380dp"
+                android:layout_height="380dp"
+                android:id="@+id/LoadingTV"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/button_2_1"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:layout_marginTop="10dp"
-                android:text=""
-                app:layout_constraintLeft_toLeftOf="@+id/button_1_1"
-                app:layout_constraintTop_toBottomOf="@+id/button_1_1"
-                android:background="@drawable/top_1"
-
-                />
-
-            <ImageView
-                android:id="@+id/button_3_1"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:layout_marginTop="10dp"
-                android:text=""
-                android:background="@drawable/top_2"
-
-                app:layout_constraintLeft_toLeftOf="@+id/button_2_1"
-                app:layout_constraintTop_toBottomOf="@+id/button_2_1"
-
-                />
-
-            <ImageView
-                android:id="@+id/button_4_1"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:layout_marginTop="10dp"
-                android:text=""
-                android:background="@drawable/top_1"
-
-                app:layout_constraintLeft_toLeftOf="@+id/button_3_1"
-                app:layout_constraintTop_toBottomOf="@+id/button_3_1"
-                />
-
-            <ImageView
-                android:id="@+id/button_1_2"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:text=""
-                android:background="@drawable/top_5"
-
-                app:layout_constraintLeft_toRightOf="@+id/button_1_1"
                 app:layout_constraintTop_toTopOf="parent"
-
-
-                />
-
-            <ImageView
-                android:id="@+id/button_2_2"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:text=""
-                android:background="@drawable/bottom_2"
-
-                app:layout_constraintLeft_toRightOf="@+id/button_1_1"
-                app:layout_constraintTop_toBottomOf="@+id/button_1_1"
-                />
-
-            <ImageView
-                android:id="@+id/button_3_2"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:text=""
-                android:background="@drawable/bottom_3"
-
-                app:layout_constraintLeft_toRightOf="@+id/button_2_1"
-                app:layout_constraintTop_toBottomOf="@+id/button_2_1"
-
-                />
-
-            <ImageView
-                android:id="@+id/button_4_2"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:layout_marginTop="10dp"
-                android:text="ImageView"
-                android:background="@drawable/bottom_2"
-
-                app:layout_constraintLeft_toLeftOf="@+id/button_3_2"
-                app:layout_constraintTop_toBottomOf="@+id/button_3_2"
-                />
-
-            <ImageView
-                android:id="@+id/button_1_3"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:text=""
-                android:background="@drawable/top_6"
-
-                app:layout_constraintLeft_toRightOf="@+id/button_1_2"
-                app:layout_constraintTop_toTopOf="parent"
-
-
-                />
-
-            <ImageView
-                android:id="@+id/button_2_3"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:text=""
-                android:background="@drawable/top_8"
-
-                app:layout_constraintLeft_toRightOf="@+id/button_2_2"
-                app:layout_constraintTop_toBottomOf="@+id/button_1_2"
-                />
-
-            <ImageView
-                android:id="@+id/button_3_3"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:text=""
-                android:background="@drawable/top_7"
-
-                app:layout_constraintLeft_toRightOf="@+id/button_3_2"
-                app:layout_constraintTop_toBottomOf="@+id/button_2_3"
-
-                />
-
-            <ImageView
-                android:id="@+id/button_4_3"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:layout_marginTop="10dp"
-                android:text=""
-                android:background="@drawable/top_6"
-
-                app:layout_constraintLeft_toLeftOf="@+id/button_3_3"
-                app:layout_constraintTop_toBottomOf="@+id/button_3_3"
-                />
+                android:text="LOADING..."
+                android:textSize="40dp"
+                android:gravity="center"
+                >
+            </TextView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

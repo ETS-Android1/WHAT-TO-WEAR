@@ -18,6 +18,7 @@ public class ClothesDB implements Serializable {
     // fields for object creation
     private static final long serialVersionUID = 1L;
     public static File myabsoluteVODKA = null;
+    public static long next_id = 1;
 
     // fields
     public ArrayList <Clothe> clotheArrayList;
@@ -26,6 +27,7 @@ public class ClothesDB implements Serializable {
     public ClothesDB(String user_spec_pat){
         this.user_spec_path = user_spec_pat;
         clotheArrayList = new ArrayList<Clothe>();
+        next_id = 1;
     }
 
     public static boolean checkObjectFileExists(File f){
@@ -96,6 +98,12 @@ public class ClothesDB implements Serializable {
             return null;
         }
 
+    }
+
+    public long getNext_id(){
+        long temp = next_id;
+        next_id++;
+        return  temp;
     }
 
 

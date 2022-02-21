@@ -217,6 +217,9 @@ public class Wardrobe extends Fragment {
 
     public void createAddClotheDialog(){
 
+        // check if we could load the main
+        MainClotheType mainClotheType = new MainClotheType();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         AlertDialog dialog;
 
@@ -245,10 +248,21 @@ public class Wardrobe extends Fragment {
                     @Override
                     public void onClick(View view) {
 
+                        Log.d("justadd","Entering the listener!");
+
+                        // check prerequesties
+
+                        // checking the image
+                        if(receiver_preview.getDrawable() == null){
+                            Toast toast = Toast.makeText(view.getContext(),"You must select an image!",Toast.LENGTH_LONG);
+                            toast.show();
+                            return;
+                        }
+
+                        // check that type has been selected
+
                         // to avoid crashes make all view unclickable here!!!
                         // TODO: MAKE THEM ALL UNCK
-
-                        Log.d("justadd","Entering the listener!");
 
                         // Load the database
                         // now load the cloths into the n X 3 array to feed it on the the view

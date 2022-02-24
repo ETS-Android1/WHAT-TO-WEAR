@@ -8,7 +8,8 @@
     android:layout_marginRight="20dp"
     android:layout_marginLeft="20dp"
     android:layout_marginTop="70dp"
-    android:gravity="center">
+    android:gravity="center"
+    >
 
     <ImageView
         android:background="@drawable/backselectimage"
@@ -74,7 +75,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:gravity="center"
-            android:id="@+id/typeselected"
+            android:id="@+id/typeselected33"
             ></TextView>
 
     </LinearLayout>

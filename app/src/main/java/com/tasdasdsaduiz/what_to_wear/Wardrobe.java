@@ -38,6 +38,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -85,7 +86,10 @@ public class Wardrobe extends Fragment {
     public int slot_to_add_j;
     public Bitmap bitmap_to_save;
     public ArrayList<String> active_tags;
-
+    public String primarytype = null;
+    public String secondarytype = null;
+    public boolean should_I_save_type = false;
+    public View the_fallen_view = null;
 
     // to put the bitmap in the preview
     public void PUTin(Uri uri) throws IOException {
@@ -212,6 +216,8 @@ public class Wardrobe extends Fragment {
                     @Override
                     public void onClick(View view) {
                         active_tags = new ArrayList<String>();
+                        primarytype = null;
+                        secondarytype = null;
                         createAddClotheDialog();
                         // pickfromgallery();
                     }
@@ -356,6 +362,30 @@ public class Wardrobe extends Fragment {
         builder.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int id) {
                 // User clicked OK button
+
+                Log.d("Dismissal","dismissal entered");
+                active_tags = new ArrayList<String>();
+                Log.d("Dismissal","the active tags have been reinitialized");
+                // we need to gather the tags that are active
+                Log.d("Dismissal","The child count for the TableLayout = " + tabLayout.getChildCount() );
+
+                for(int i = 0; i < tabLayout.getChildCount(); i++){
+                    TableRow tb = (TableRow) tabLayout.getChildAt(i);
+                    for(int j=0; j<tb.getChildCount(); j++) {
+
+                        Button v = (Button) tb.getChildAt(j);
+                        Log.d("Dismissal", "the child at tb = " + i + "j = " + " is retrived");
+
+                        if (v.getCurrentTextColor() == Color.parseColor("#FFFFFFFF")) {
+                            Log.d("Dismissal", "color testing success");
+                            active_tags.add(v.getText().toString());
+                            Log.d("Dismissal", "adding it");
+                        }
+
+                    }
+
+                }
+
                 dialogInterface.dismiss();
             }
         });
@@ -371,28 +401,9 @@ public class Wardrobe extends Fragment {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
 
-                        Log.d("Dismissal","dismissal entered");
-                        active_tags = new ArrayList<String>();
-                        Log.d("Dismissal","the active tags have been reinitialized");
-                        // we need to gather the tags that are active
-                        Log.d("Dismissal","The child count for the TableLayout = " + tabLayout.getChildCount() );
-
-                        for(int i = 0; i < tabLayout.getChildCount(); i++){
-                            TableRow tb = (TableRow) tabLayout.getChildAt(i);
-                            for(int j=0; j<tb.getChildCount(); j++) {
-
-                                Button v = (Button) tb.getChildAt(j);
-                                Log.d("Dismissal", "the child at tb = " + i + "j = " + " is retrived");
-
-                                if (v.getCurrentTextColor() == Color.parseColor("#FFFFFFFF")) {
-                                    Log.d("Dismissal", "color testing success");
-                                    active_tags.add(v.getText().toString());
-                                    Log.d("Dismissal", "adding it");
-                                }
-
-                            }
-
-                        }
+                        // fixint the text view
+                        TextView tvtags = the_fallen_view.findViewById(R.id.howmanytags);
+                        tvtags.setText( active_tags.size() + " tag(s) selected" );
 
                     }
                 }
@@ -401,6 +412,8 @@ public class Wardrobe extends Fragment {
     }
 
     public void createTypeDialog(){
+
+        should_I_save_type = false;
 
         Log.d("type","we are entering the create dialog");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -429,11 +442,12 @@ public class Wardrobe extends Fragment {
             Log.d("type","button added in the scroll view");
 
             button.setText(to_add);
-            button.setTextSize( 12 );
+            button.setTextSize( 18 );
+            button.setPadding(dpTopx(10),0,dpTopx(10),0);
 
             Log.d("type","button text configed");
 
-            button.getLayoutParams().height = dpTopx(39);
+            button.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
             button.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
 
             button.setBackground( ContextCompat.getDrawable( getActivity() , R.drawable.tagsbutton) );
@@ -480,17 +494,46 @@ public class Wardrobe extends Fragment {
                                         Log.d("type","button added in the secondary scroll view");
 
                                         button_secondary.setText(to_add2);
-                                        button_secondary.setTextSize( 12 );
+                                        button_secondary.setTextSize( 18 );
+                                        button_secondary.setPadding(dpTopx(10),0,dpTopx(10),0);
 
                                         Log.d("type","button secondary text configed");
 
-                                        button_secondary.getLayoutParams().height = dpTopx(39);
+                                        button_secondary.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
                                         button_secondary.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
 
                                         button_secondary.setBackground( ContextCompat.getDrawable( getActivity() , R.drawable.tagsbutton) );
                                         button_secondary.setTextColor( Color.parseColor("#7B1FA2") );
 
                                         // here add the listener for the subtype to save they type
+
+                                        button_secondary.setOnClickListener(
+                                                new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+
+                                                        // make all of the secondary scroll views to be white
+                                                        // search which button is parple and make it white
+                                                        for(int jix = 0; jix < scrollViewSecondary.getChildCount(); jix++){
+                                                            Button underx = (Button) scrollViewSecondary.getChildAt(jix);
+                                                            if( underx.getCurrentTextColor() == Color.parseColor("#FFFFFFFF") ){
+                                                                underx.setBackground( ContextCompat.getDrawable( getActivity() , R.drawable.tagsbutton) );
+                                                                underx.setTextColor( Color.parseColor("#7B1FA2") );
+                                                                // don't break here
+                                                            }
+                                                        }
+
+                                                        // make this one purple
+                                                        button_secondary.setBackground( ContextCompat.getDrawable( getActivity() , activatedtag) );
+                                                        button_secondary.setTextColor( Color.parseColor("#FFFFFFFF") );
+
+                                                        // put in the public variable this type combination
+                                                        primarytype = button.getText().toString();
+                                                        secondarytype = button_secondary.getText().toString();
+
+                                                    }
+                                                }
+                                        );
 
                                     }
                                     break;
@@ -506,6 +549,15 @@ public class Wardrobe extends Fragment {
         builder.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int id) {
                 // User clicked OK button
+                should_I_save_type = (primarytype != null);
+                if(should_I_save_type) {
+                    Log.d("whydoyoubrake", "comehere");
+                    TextView textView = (TextView) the_fallen_view.findViewById(R.id.typeselected33);
+                    Log.d("whydoyoubrake", "text view retrieved and is not " + (textView == null) );
+                    textView.setText((String) (primarytype + " / " + secondarytype));
+                    Log.d("whydoyoubrake", "text is set");
+                }
+                should_I_save_type = false;
                 dialogInterface.dismiss();
             }
         });
@@ -528,6 +580,8 @@ public class Wardrobe extends Fragment {
 
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View popapp = inflater.inflate(R.layout.addclothepop, null);
+
+        the_fallen_view = popapp;
 
         receiver_preview = (ImageView) popapp.findViewById(R.id.cloth_preview);
         receiver_preview.setOnClickListener(
@@ -587,10 +641,25 @@ public class Wardrobe extends Fragment {
                             return;
                         }
 
+                        if(primarytype == null){
+                            Toast toast = Toast.makeText(view.getContext(),"You must select a primary and secondary type!",Toast.LENGTH_LONG);
+                            toast.show();
+                            return;
+                        }
+
                         // check that type has been selected
 
                         // to avoid crashes make all view unclickable here!!!
                         // TODO: MAKE THEM ALL UNCK
+
+                        // first of all the popapps views should be not clickable from this point
+                        LinearLayout ll = (LinearLayout) popapp;
+                        for(int ixx=0; ixx < ll.getChildCount() ; ixx++){
+                            View v = ll.getChildAt(ixx);
+                            v.setActivated(false);
+                            v.setClickable(false);
+                        }
+
 
                         // Load the database
                         // now load the cloths into the n X 3 array to feed it on the the view
@@ -619,7 +688,7 @@ public class Wardrobe extends Fragment {
 
                         // retrieve filters
                         ArrayList <String> tags = new ArrayList<String>(active_tags);
-                        String type = "";
+                        String type = "" + primarytype + "/" + secondarytype;
 
                         // now fill the clothes data fields
                         Clothe clothe = new Clothe(clothe_ID,tags,directory,type);
@@ -767,6 +836,5 @@ public class Wardrobe extends Fragment {
         int px = ( dp * 100 ) / pxToDp(100);
         return px;
     }
-
 
 }

@@ -34,6 +34,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:layout_gravity="center"
             >
             <LinearLayout
                 android:layout_width="match_parent"
@@ -41,6 +42,8 @@
                 android:orientation="vertical"
                 android:id="@+id/primaryscroll"
                 android:gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 >
                 <TextView
                     android:layout_width="wrap_content"
@@ -92,6 +95,8 @@
                 android:orientation="vertical"
                 android:id="@+id/secondaryscroll"
                 android:gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 >
                 <TextView
                     android:layout_width="wrap_content"

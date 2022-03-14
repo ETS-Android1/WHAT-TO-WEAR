@@ -18,11 +18,11 @@ public class ClothesDB implements Serializable {
     // fields for object creation
     private static final long serialVersionUID = 1L;
     public static File myabsoluteVODKA = null;
-    public static long next_id = 1;
 
     // fields
     public ArrayList <Clothe> clotheArrayList;
     public String user_spec_path = null; // this path should be different for each user
+    public long next_id = 1;
 
     public ClothesDB(String user_spec_pat){
         this.user_spec_path = user_spec_pat;

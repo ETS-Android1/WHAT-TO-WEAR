@@ -12,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -21,12 +22,21 @@ public class Clothe implements Serializable{
     public ArrayList <String> filters; // these are essentially the tags
     public File image_dir = null;
     public String type = null;
+    public Date last_wore_on = null;
 
     public Clothe(long id, ArrayList<String> infilters, File image, String type){
         this.ID = id;
         this.filters = new ArrayList<String>(infilters);
         this.image_dir = image;
         this.type = type;
+        last_wore_on = null;
+    }
+
+    public boolean equals(Clothe b){
+        if(this.ID == b.ID){
+            return true;
+        }
+        return false;
     }
 
     public boolean andfilter(ArrayList <String> input_filters){

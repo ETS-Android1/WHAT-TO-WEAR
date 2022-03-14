@@ -149,6 +149,7 @@
             android:src="@drawable/editcloth"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
+            android:background="#AAA"
             >
         </ImageView>
     </androidx.cardview.widget.CardView>
@@ -175,6 +176,7 @@
             android:src="@drawable/deletion"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
+            android:background="#AAA"
             >
         </ImageView>
     </androidx.cardview.widget.CardView>
@@ -201,6 +203,7 @@
             android:src="@drawable/shiny_star"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
+            android:background="#AAA"
             >
         </ImageView>
     </androidx.cardview.widget.CardView>

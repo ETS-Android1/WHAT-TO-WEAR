@@ -230,6 +230,12 @@ public class registrationFragment extends Fragment {
                                             return;
                                         }
 
+                                        if( haswhitespace(username.getText().toString()) ){
+                                            Toast toast = Toast.makeText(getContext(),"Username can't contain whitespaces!",Toast.LENGTH_LONG);
+                                            toast.show();
+                                            return;
+                                        }
+
                                         if( (email.getText().length() == 0) || ( email.getText().toString().equals("e-mail") ) ){
                                             Toast toast = Toast.makeText(getContext(),"You need to associate an e-mail with your account!",Toast.LENGTH_LONG);
                                             toast.show();
@@ -411,6 +417,15 @@ public class registrationFragment extends Fragment {
         item.setFocusable(false);
         item.setClickable(false);
         item.setEnabled(false);
+    }
+
+    public boolean haswhitespace(String x){
+        for(int i=0;i<x.length();i++){
+            if( ( x.charAt(i) == ' ' ) || ( x.charAt(i) == '\n' ) || ( x.charAt(i) == '\t' ) ){
+                return true;
+            }
+        }
+        return false;
     }
 
 }

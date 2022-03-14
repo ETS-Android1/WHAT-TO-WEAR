@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -19,6 +20,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -60,6 +62,8 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.google.android.material.tabs.TabLayout;
 
+import org.w3c.dom.Text;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -90,6 +94,8 @@ public class Wardrobe extends Fragment {
     public String secondarytype = null;
     public boolean should_I_save_type = false;
     public View the_fallen_view = null;
+    public ArrayList < Clothe > selected_clothes;
+    public Clothe curr_sel_clothe;
 
     // to put the bitmap in the preview
     public void PUTin(Uri uri) throws IOException {
@@ -98,6 +104,7 @@ public class Wardrobe extends Fragment {
         bitmap_to_save = bitmap;
         Log.d("getimmage","bitmap set!");
         Log.d("getimmage","image view retrieved");
+        receiver_preview.setBackgroundColor(Color.TRANSPARENT);
         receiver_preview.setImageBitmap(bitmap);
         Log.d("getimmage","then why do we get an exception bor?");
     }
@@ -119,6 +126,7 @@ public class Wardrobe extends Fragment {
                         @Override
                         public void onActivityResult(Uri uri) {
                             // Handle the returned Uri
+                            receiver_preview.setClickable(true);
                             Log.d("getimmage","easiest man alive");
                             try{
                                 PUTin(uri);
@@ -185,6 +193,8 @@ public class Wardrobe extends Fragment {
         mObserver = new MyLifeCycleObserver(requireActivity().getActivityResultRegistry());
         getLifecycle().addObserver(mObserver);
 
+        selected_clothes = new ArrayList<Clothe>();
+
     }
 
     @Override
@@ -220,6 +230,69 @@ public class Wardrobe extends Fragment {
                         secondarytype = null;
                         createAddClotheDialog();
                         // pickfromgallery();
+                    }
+                }
+        );
+
+        ImageView deleteclothesbutton = (ImageView) view.findViewById(R.id.deleteclotheimageview);
+        deleteclothesbutton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        // based on the active tags we now need to delete all the clothes from the database
+
+                        // step 1: Load the database.
+                        String user_clothes_path = (String) ("Clothes_of_" + Main_Menu.the_username_argument + ".obj");
+                        ClothesDB clothesDB = ClothesDB.load( new File(getActivity().getFilesDir(), user_clothes_path) );
+
+                        // step 2: delete clothes
+                        for(int ix=0; ix<selected_clothes.size(); ix++){
+                            Clothe cc = selected_clothes.get(ix);
+                            for(int j=0;j<clothesDB.clotheArrayList.size();j++){
+                                if( cc.ID == clothesDB.clotheArrayList.get(j).ID ){
+                                    clothesDB.clotheArrayList.remove(j);
+                                    break;
+                                }
+                            }
+                        }
+
+                        // step 3: save the modified database
+                        ClothesDB.store( new File(getActivity().getFilesDir(), user_clothes_path) , clothesDB );
+
+                        // step 3.1: delete the selected clothes array as well
+                        selected_clothes.clear();
+
+                        // step 4: run the wardrober
+                        wardrober();
+
+                        // step 5 make the correct buttons clickable
+                        Log.d("this_is_it","we clear the selection!");
+                        ImageView cus = MYCL.findViewById(R.id.favoriteclothe);
+                        cus.setClickable(false);
+                        cus.setBackgroundColor(Color.parseColor("#FFAAAAAA"));
+                        cus = MYCL.findViewById(R.id.deleteclotheimageview);
+                        cus.setClickable(false);
+                        cus.setBackgroundColor(Color.parseColor("#FFAAAAAA"));
+                        cus = MYCL.findViewById(R.id.editclotheimageview);
+                        cus.setClickable(false);
+                        cus.setBackgroundColor(Color.parseColor("#FFAAAAAA"));
+                        cus = MYCL.findViewById(R.id.addclotheimageview);
+                        cus.setClickable(true);
+                        cus.setBackgroundColor(Color.parseColor("#FFFFFFFF"));
+
+                    }
+                }
+        );
+
+        ImageView editclothesbutton = view.findViewById(R.id.editclotheimageview);
+        editclothesbutton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        createEditClotheDialog();
+
                     }
                 }
         );
@@ -314,7 +387,6 @@ public class Wardrobe extends Fragment {
                 button.setBackground( ContextCompat.getDrawable( getActivity() , R.drawable.activatedtag ) );
                 button.setTextColor( Color.parseColor("#FFFFFFFF") );
             }
-
 
             //Log.d("draw","thedraw = " + button.getBackground() )
             button.setOnClickListener(
@@ -570,6 +642,136 @@ public class Wardrobe extends Fragment {
 
     }
 
+    public void createShowClotheDialog() {
+
+        // check if we could load the main
+        // MainClotheType mainClotheType = new MainClotheType();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog dialog;
+
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View popapp = inflater.inflate(R.layout.showclothepop, null);
+
+        ImageView preview = popapp.findViewById(R.id.cloth_previewer);
+
+        try {
+            FileInputStream fileInputStream = new FileInputStream(curr_sel_clothe.image_dir);
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+            Bitmap bitmap = BitmapFactory.decodeStream(bufferedInputStream);
+            preview.setImageBitmap(bitmap);
+        }
+        catch (Exception e){
+            Log.d("justadd","The image could not be loaded to the imageview");
+        }
+
+        TextView lwt = popapp.findViewById(R.id.last_wore_text);
+        String verdict;
+        if(curr_sel_clothe.last_wore_on == null){
+            verdict = "Never";
+        }
+        else{
+            verdict = curr_sel_clothe.last_wore_on.toString();
+        }
+        lwt.setText("Last wore on:\n" + verdict);
+
+        builder.setView(popapp);
+        dialog = builder.create();
+        dialog.show();
+
+    }
+
+    public void createEditClotheDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog dialog;
+
+        curr_sel_clothe = selected_clothes.get(0); // it's just one boy then
+
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View popapp = inflater.inflate(R.layout.editclothpop, null);
+
+        the_fallen_view = popapp;
+
+        ImageView preview = popapp.findViewById(R.id.cloth_previewerer);
+
+        try {
+            FileInputStream fileInputStream = new FileInputStream(curr_sel_clothe.image_dir);
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+            Bitmap bitmap = BitmapFactory.decodeStream(bufferedInputStream);
+            preview.setImageBitmap(bitmap);
+        }
+        catch (Exception e){
+            Log.d("justadd","The image could not be loaded to the imageview");
+        }
+
+        Button selecttags = (Button) popapp.findViewById(R.id.selecttags);
+        selecttags.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        createTagsDialog();
+
+                    }
+                }
+        );
+
+        Button selectype = (Button) popapp.findViewById(R.id.selecttype);
+        selectype.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        createTypeDialog();
+
+                    }
+                }
+        );
+
+        TextView showtagsview = popapp.findViewById(R.id.howmanytags);
+        int howhigh = curr_sel_clothe.filters.size();
+        showtagsview.setText(howhigh + " tag(s) selected");
+
+        primarytype = "";
+        int jlo = 0;
+        for(jlo = 0; jlo < curr_sel_clothe.type.length(); jlo++){
+            if(curr_sel_clothe.type.charAt(jlo) == '/'){
+                break;
+            }
+            primarytype += curr_sel_clothe.type.charAt(jlo);
+        }
+        secondarytype = "";
+        for( ; jlo < curr_sel_clothe.type.length(); jlo++){
+            secondarytype += curr_sel_clothe.type.charAt(jlo);
+        }
+        TextView showtypesview = popapp.findViewById(R.id.typeselected33);
+        showtagsview.setText( primarytype + "/" + secondarytype);
+
+        TextView lastdatetext = popapp.findViewById(R.id.lastdatetext);
+        if(curr_sel_clothe.last_wore_on == null){
+            lastdatetext.setText("Never");
+        }
+        else{
+            lastdatetext.setText(curr_sel_clothe.last_wore_on.toString());
+        }
+
+        Button lastdate = popapp.findViewById(R.id.setlastdateused);
+        lastdate.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                    }
+                }
+        );
+
+        builder.setView(popapp);
+        dialog = builder.create();
+        dialog.show();
+
+    }
+
     public void createAddClotheDialog(){
 
         // check if we could load the main
@@ -588,8 +790,8 @@ public class Wardrobe extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        receiver_preview.setClickable(false); // onActivity result get's this back
                         mObserver.selectImage();
-                        receiver_preview.setBackgroundColor(Color.TRANSPARENT);
                     }
                 }
         );
@@ -630,29 +832,7 @@ public class Wardrobe extends Fragment {
                     @Override
                     public void onClick(View view) {
 
-                        Log.d("justadd","Entering the listener!");
-
-                        // check prerequesties
-
-                        // checking the image
-                        if(receiver_preview.getDrawable() == null){
-                            Toast toast = Toast.makeText(view.getContext(),"You must select an image!",Toast.LENGTH_LONG);
-                            toast.show();
-                            return;
-                        }
-
-                        if(primarytype == null){
-                            Toast toast = Toast.makeText(view.getContext(),"You must select a primary and secondary type!",Toast.LENGTH_LONG);
-                            toast.show();
-                            return;
-                        }
-
-                        // check that type has been selected
-
-                        // to avoid crashes make all view unclickable here!!!
-                        // TODO: MAKE THEM ALL UNCK
-
-                        // first of all the popapps views should be not clickable from this point
+                        // set all unclickable reset if there are mistakes in the fields
                         LinearLayout ll = (LinearLayout) popapp;
                         for(int ixx=0; ixx < ll.getChildCount() ; ixx++){
                             View v = ll.getChildAt(ixx);
@@ -660,6 +840,28 @@ public class Wardrobe extends Fragment {
                             v.setClickable(false);
                         }
 
+                        // checking the image
+                        if(receiver_preview.getDrawable() == null){
+                            for(int ixx=0; ixx < ll.getChildCount() ; ixx++){
+                                View v = ll.getChildAt(ixx);
+                                v.setActivated(true);
+                                v.setClickable(true);
+                            }
+                            Toast toast = Toast.makeText(view.getContext(),"You must select an image!",Toast.LENGTH_LONG);
+                            toast.show();
+                            return;
+                        }
+
+                        if(primarytype == null){
+                            for(int ixx=0; ixx < ll.getChildCount() ; ixx++){
+                                View v = ll.getChildAt(ixx);
+                                v.setActivated(true);
+                                v.setClickable(true);
+                            }
+                            Toast toast = Toast.makeText(view.getContext(),"You must select a primary and secondary type!",Toast.LENGTH_LONG);
+                            toast.show();
+                            return;
+                        }
 
                         // Load the database
                         // now load the cloths into the n X 3 array to feed it on the the view
@@ -670,6 +872,8 @@ public class Wardrobe extends Fragment {
 
                         // ADD clothe to database here (and to the consistent table)
                         long clothe_ID = clothesDB.getNext_id();
+
+                        Log.d("this_is_it","The ID THAT THE NEW CLOTHE GETS IS "+ clothe_ID);
 
                         // save the image located in bitmap_to_save variable to a specific path
 
@@ -710,7 +914,7 @@ public class Wardrobe extends Fragment {
                         dialog.dismiss();
 
                         // RESTORE! => to avoid crashes make all view unclickable here!!!
-                        // TODO: RESTORE -> MAKE THEM ALL UNCK
+                        // NO NEED CHUCK THEY ALREADY BECOME CLICKABLE WHEN YOU RE-IFLATE THE VIEW
 
                     }
                 }
@@ -802,6 +1006,7 @@ public class Wardrobe extends Fragment {
         params.topMargin = dpTopx(10);
         params.leftMargin = dpTopx(10);
 
+        // now adjust it's margins based on the ids of the previous ones (top and left)
         if( i == 0 ){
             params.topToTop = 0;
         }
@@ -823,7 +1028,171 @@ public class Wardrobe extends Fragment {
         imageView.setId( (i+1) * 3 + (j + 1) ); // very important stuff here
         Log.d("clothes","id set successfully");
 
-        // now adjust it's margins based on the ids of the previous ones (top and left)
+        Log.d("this_is_it","this point is reached!");
+        // long click listener to make it selected
+        // Clothe final fcloth = clothe;
+
+        imageView.setOnLongClickListener(
+                new View.OnLongClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.M)
+                    @Override
+                    public boolean onLongClick(View view) {
+
+                        boolean is_selected = false;
+                        Log.d("this_is_it","=====================>  LONG CLICK <===============================");
+                        Log.d("this_is_it","the size of the selected clothes is = " + selected_clothes.size());
+                        for(int i=0; i<selected_clothes.size(); i++){
+                            Log.d("this_is_it","in the for loop!");
+                            Log.d("this_is_it","THE ID OF CLOTHE = " + clothe.ID);
+                            Log.d("this_is_it","THE ID OF SELECTED CLOTHE i = " + selected_clothes.get(i).ID );
+                            if( clothe.ID == selected_clothes.get(i).ID ){
+
+                                //Log.d
+
+                                Log.d("this_is_it","equals is true");
+
+                                is_selected = true;
+                                selected_clothes.remove(i);
+                                break;
+                            }
+                        }
+
+                        if(is_selected){
+                            imageView.setForeground(null);
+                        }
+                        else {
+                            imageView.setForeground(ContextCompat.getDrawable(getActivity(), selected_cloth));
+                            selected_clothes.add(clothe);
+                        }
+
+                        // Re-make the enablement of buttons
+                        if(selected_clothes.size() == 0){
+
+                            Log.d("this_is_it","the array becomes empty so we clear!");
+
+                            ImageView cus = MYCL.findViewById(R.id.favoriteclothe);
+                            cus.setClickable(false);
+                            cus.setBackgroundColor(Color.parseColor("#FFAAAAAA"));
+
+                            cus = MYCL.findViewById(R.id.deleteclotheimageview);
+                            cus.setClickable(false);
+                            cus.setBackgroundColor(Color.parseColor("#FFAAAAAA"));
+
+                            cus = MYCL.findViewById(R.id.editclotheimageview);
+                            cus.setClickable(false);
+                            cus.setBackgroundColor(Color.parseColor("#FFAAAAAA"));
+
+                            cus = MYCL.findViewById(R.id.addclotheimageview);
+                            cus.setClickable(true);
+                            cus.setBackgroundColor(Color.parseColor("#FFFFFFFF"));
+
+                        }
+                        else{
+
+                            if(selected_clothes.size() == 1){
+
+                                Log.d("this_is_it","the array becomes empty so we clear!");
+
+                                ImageView cus = MYCL.findViewById(R.id.favoriteclothe);
+                                cus.setClickable(true);
+                                cus.setBackgroundColor(Color.parseColor("#FFFFFF"));
+
+                                Log.d("this_is_it","first button is done");
+
+                                cus = MYCL.findViewById(R.id.deleteclotheimageview);
+                                cus.setClickable(true);
+                                cus.setBackgroundColor(Color.parseColor("#FFFFFFFF"));
+
+                                Log.d("this_is_it","second button is done!");
+
+                                cus = MYCL.findViewById(R.id.editclotheimageview);
+                                cus.setClickable(true);
+                                cus.setBackgroundColor(Color.parseColor("#FFFFFFFF"));
+
+                                Log.d("this_is_it","third button is done!");
+
+                                cus = MYCL.findViewById(R.id.addclotheimageview);
+                                cus.setClickable(false);
+                                cus.setBackgroundColor(Color.parseColor("#FFAAAAAA"));
+
+                                Log.d("this_is_it","last button is done!");
+
+                            }
+                            else{
+
+                                ImageView cus = MYCL.findViewById(R.id.favoriteclothe);
+                                cus.setClickable(true);
+                                cus.setBackgroundColor(Color.parseColor("#FFFFFFFF"));
+
+                                cus = MYCL.findViewById(R.id.deleteclotheimageview);
+                                cus.setClickable(true);
+                                cus.setBackgroundColor(Color.parseColor("#FFFFFFFF"));
+
+                                cus = MYCL.findViewById(R.id.editclotheimageview);
+                                cus.setClickable(false);
+                                cus.setBackgroundColor(Color.parseColor("#FFAAAAAA"));
+
+                                cus = MYCL.findViewById(R.id.addclotheimageview);
+                                cus.setClickable(false);
+                                cus.setBackgroundColor(Color.parseColor("#FFAAAAAA"));
+
+                            }
+
+                        }
+
+                        return true;
+                    }
+                }
+        );
+
+        // make a listener to show the clothe if we have a normal click and make all of the buttons as they were in the beginning
+        // also we have to deselect all the clothes that have a foreground
+        imageView.setOnClickListener(
+                new View.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.M)
+                    @Override
+                    public void onClick(View view) {
+                        Log.d("this_is_it","-----------------------------------> SIMPLE CLICK <---------------------------");
+
+                        // we deselect all clothes
+                        ConstraintLayout clothesplain = MYCL.findViewById(R.id.ClothesPlain);
+                        Log.d("this_is_it","scroll view identified the cp has " + clothesplain.getChildCount() + " that many views!" );
+                        // visually
+                        for(int i=0;i<clothesplain.getChildCount();i++){
+
+                            Log.d("this_is_it","for loop endered index = " + i);
+
+                            View v = clothesplain.getChildAt(i);
+                            v.setForeground(ContextCompat.getDrawable(getContext(), transparent));
+
+                        }
+                        // actually
+                        selected_clothes.clear();
+
+                        // remake all buttons
+                        Log.d("this_is_it","we clear the selection!");
+                        ImageView cus = MYCL.findViewById(R.id.favoriteclothe);
+                        cus.setClickable(false);
+                        cus.setBackgroundColor(Color.parseColor("#FFAAAAAA"));
+                        cus = MYCL.findViewById(R.id.deleteclotheimageview);
+                        cus.setClickable(false);
+                        cus.setBackgroundColor(Color.parseColor("#FFAAAAAA"));
+                        cus = MYCL.findViewById(R.id.editclotheimageview);
+                        cus.setClickable(false);
+                        cus.setBackgroundColor(Color.parseColor("#FFAAAAAA"));
+                        cus = MYCL.findViewById(R.id.addclotheimageview);
+                        cus.setClickable(true);
+                        cus.setBackgroundColor(Color.parseColor("#FFFFFFFF"));
+
+                        // show popapp with image of the clothe
+                        // last day that it has been wore
+                        curr_sel_clothe = clothe;
+                        createShowClotheDialog();
+
+                    }
+                }
+        );
+
 
     }
 
